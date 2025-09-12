@@ -1,0 +1,2920 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kyuri - Sports Betting Analyzer</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* Professional Dark Theme */
+      :root {
+        /* Gold + Yellow palette */
+        --primary-color: #eab308; /* gold/yellow */
+        --primary-dark: #ca8a04; /* deeper gold */
+        --secondary-color: #f59e0b; /* amber */
+        --accent-gold-light: #fde68a; /* light gold */
+        --accent-gold-mid: #f59e0b; /* amber */
+        --accent-gold-deep: #d97706; /* deep amber */
+        --gold-gradient: linear-gradient(
+          135deg,
+          var(--accent-gold-light) 0%,
+          var(--accent-gold-mid) 45%,
+          var(--accent-gold-deep) 100%
+        );
+
+        /* Dark surfaces for contrast */
+        --background-primary: #0b0b0c;
+        --background-secondary: #121213;
+        --background-card: #17181b;
+        --background-sidebar: #0b0b0c;
+
+        --text-primary: #f9fafb;
+        --text-secondary: #e5e7eb;
+        --text-muted: #9ca3af;
+
+        --border-color: #2a2e35;
+        --border-light: #3a3f47;
+
+        /* Status colors */
+        --success-color: #22c55e;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+
+        --shadow-dark: 0 10px 25px -3px rgba(0, 0, 0, 0.5);
+        --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.25);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont,
+          "Segoe UI", Roboto, sans-serif;
+        background: var(--background-primary);
+        color: var(--text-primary);
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
+      /* Navigation */
+      .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        padding: 1rem 0;
+        background: var(--background-secondary);
+        border-bottom: 1px solid var(--border-color);
+        backdrop-filter: blur(20px);
+      }
+
+      .navbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        text-decoration: none;
+      }
+
+      .navbar-brand i {
+        color: var(--primary-color);
+        font-size: 2rem;
+      }
+
+      /* Container */
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+
+      .main-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      @media (min-width: 1024px) {
+        .main-grid {
+          grid-template-columns: 400px 1fr;
+          gap: 2.5rem;
+        }
+      }
+
+      /* Cards */
+      .glass-card {
+        background: var(--background-card);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        box-shadow: var(--shadow-dark);
+        transition: all 0.3s ease;
+      }
+
+      .glass-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-light);
+        border-color: var(--border-light);
+      }
+
+      /* Card Headers */
+      .card-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      .card-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: var(--text-primary);
+      }
+
+      .card-description {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      .card-content {
+        padding: 1.5rem;
+      }
+
+      /* Form Elements */
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .input,
+      .select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: var(--background-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-primary);
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+      }
+
+      .input::placeholder {
+        color: var(--text-muted);
+      }
+
+      .input:focus,
+      .select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        background: var(--background-primary);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      /* Buttons */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+      }
+
+      .btn-primary {
+        background: var(--gold-gradient);
+        color: #111;
+        border: 1px solid rgba(234, 179, 8, 0.4);
+      }
+
+      .btn-primary:hover {
+        filter: brightness(1.05);
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        background: linear-gradient(135deg, #fcd34d, #f59e0b);
+        color: #111;
+        border: 1px solid rgba(245, 158, 11, 0.35);
+      }
+
+      .btn-secondary:hover {
+        background: #059669;
+        transform: translateY(-1px);
+      }
+
+      .btn-success {
+        background: var(--success-color);
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: #059669;
+        transform: translateY(-1px);
+      }
+
+      .btn-warning {
+        background: var(--warning-color);
+        color: white;
+      }
+
+      .btn-outline {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+      }
+
+      .btn-outline:hover {
+        background: var(--background-secondary);
+        border-color: var(--border-light);
+      }
+
+      .btn-full {
+        width: 100%;
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+
+      /* Game Cards */
+      .game-card {
+        margin-bottom: 1.5rem;
+        background: var(--background-card);
+      }
+
+      .game-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1rem;
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      /* Date grouping header */
+      .date-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 1rem;
+        margin: 1rem 0 0.5rem 0;
+        background: var(--background-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+      }
+      .date-header .date-title {
+        font-weight: 800;
+        letter-spacing: 0.2px;
+      }
+      .date-header .date-pill {
+        padding: 0.25rem 0.5rem;
+        border-radius: 9999px;
+        background: var(--gold-gradient);
+        color: #111;
+        font-weight: 700;
+        border: 1px solid rgba(234, 179, 8, 0.35);
+        font-size: 0.75rem;
+      }
+
+      .game-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: var(--text-primary);
+      }
+
+      .game-tournament {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        font-style: italic;
+      }
+
+      .game-time {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+      }
+
+      .suggestion-badge {
+        padding: 0.5rem 1rem;
+        background: var(--gold-gradient);
+        border-radius: 20px;
+        font-weight: 800;
+        font-size: 0.8rem;
+        color: #111;
+        border: 1px solid rgba(234, 179, 8, 0.35);
+      }
+
+      .bookmaker-section {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .bookmaker-name {
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.1rem;
+      }
+
+      .bookmaker-name i {
+        color: var(--warning-color);
+      }
+
+      .odds-grid {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .team-odds {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: var(--background-secondary);
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+      }
+
+      .team-odds:hover {
+        background: var(--background-primary);
+        border-color: var(--border-light);
+        transform: translateX(5px);
+      }
+
+      .team-name {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-primary);
+      }
+
+      .probability-bar {
+        width: 100px;
+        height: 6px;
+        background: var(--border-color);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .probability-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #fde68a, #eab308, #ca8a04);
+        border-radius: 10px;
+        transition: width 0.8s ease;
+      }
+
+      .odds-price {
+        font-size: 1.2rem;
+        font-weight: 900;
+        color: var(--primary-color);
+        margin-bottom: 0.25rem;
+      }
+
+      .odds-probability {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+
+      /* Calculator Tabs */
+      .calculator-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .calc-tab {
+        padding: 0.5rem 1rem;
+        background: var(--background-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .calc-tab:hover {
+        background: var(--background-primary);
+        color: var(--text-primary);
+      }
+
+      .calc-tab.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+      }
+
+      .calculator {
+        display: none;
+      }
+
+      .calculator.active {
+        display: block;
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .calculator h4 {
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .calculator h4 i {
+        color: var(--primary-color);
+      }
+
+      /* Results */
+      .calc-result {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: var(--background-secondary);
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        display: none;
+      }
+
+      .calc-result.show {
+        display: block;
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateY(10px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .result {
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+        text-align: center;
+      }
+
+      .result.positive {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid var(--success-color);
+        color: var(--success-color);
+      }
+
+      .result.negative {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid var(--danger-color);
+        color: var(--danger-color);
+      }
+
+      .result.warning {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid var(--warning-color);
+        color: var(--warning-color);
+      }
+
+      .error {
+        padding: 1rem;
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid var(--danger-color);
+        color: var(--danger-color);
+        border-radius: 8px;
+        margin-top: 1rem;
+        text-align: center;
+        font-weight: 600;
+      }
+
+      /* Parlay Cards */
+      .parlay-card {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid var(--success-color);
+      }
+
+      .parlay-header {
+        background: var(--gold-gradient);
+        color: #111;
+        margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+        padding: 1.5rem;
+        border-radius: 12px 12px 0 0;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        border-bottom: 1px solid rgba(234, 179, 8, 0.35);
+      }
+
+      /* Loading Spinner */
+      .loading-spinner {
+        width: 24px;
+        height: 24px;
+        border: 3px solid var(--border-color);
+        border-top: 3px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        display: none;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Welcome State */
+      .welcome-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem 2rem;
+        text-align: center;
+        color: var(--text-muted);
+      }
+
+      .welcome-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        color: var(--primary-color);
+        opacity: 0.7;
+      }
+
+      .welcome-state h3 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: var(--text-primary);
+      }
+
+      /* Modal */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      }
+
+      .modal-overlay.show {
+        display: flex !important;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .modal-content {
+        background: var(--background-card);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        max-width: 600px;
+        width: 100%;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: var(--shadow-dark);
+      }
+
+      /* Utility Classes */
+      .flex {
+        display: flex;
+      }
+      .gap-2 {
+        gap: 0.5rem;
+      }
+      .flex-1 {
+        flex: 1;
+      }
+      .text-center {
+        text-align: center;
+      }
+      .w-full {
+        width: 100%;
+      }
+      .py-4 {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+      }
+      .mb-2 {
+        margin-bottom: 0.5rem;
+      }
+      .opacity-50 {
+        opacity: 0.5;
+      }
+
+      /* Parlay Team Cards */
+      .parlay-team {
+        background: var(--background-secondary);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+      }
+
+      .parlay-team:hover {
+        background: var(--background-primary);
+        transform: translateY(-2px);
+      }
+
+      .team-details {
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+      }
+
+      .parlay-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border-color);
+      }
+
+      .stat-item {
+        text-align: center;
+        padding: 1rem;
+        background: var(--background-secondary);
+        border-radius: 8px;
+      }
+
+      .stat-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.25rem;
+      }
+
+      .stat-label {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+      }
+
+      /* Notification Components */
+      .notification-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 1rem;
+      }
+
+      .notification-form {
+        display: none;
+      }
+
+      .notification-form.active {
+        display: block;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .notification-status {
+        margin-top: 1rem;
+        padding: 1rem;
+        border-radius: 8px;
+        animation: slideIn 0.3s ease;
+      }
+
+      /* Alert Components */
+      .alert {
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+      }
+
+      .alert-info {
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid var(--primary-color);
+        color: var(--primary-color);
+      }
+
+      .alert-danger {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid var(--danger-color);
+        color: var(--danger-color);
+      }
+
+      /* Live Status */
+      .live-status {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+        font-weight: 500;
+        font-size: 0.875rem;
+      }
+
+      .status-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      .status-indicator.offline {
+        background: var(--text-muted);
+      }
+
+      .status-indicator.online {
+        background: var(--success-color);
+        animation: pulse 2s infinite;
+      }
+
+      .status-indicator.updating {
+        background: var(--warning-color);
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      /* Alerts Card */
+      .alerts-card {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid var(--warning-color);
+      }
+
+      .alert-count {
+        background: var(--danger-color);
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: auto;
+      }
+
+      /* Help Button */
+      .help-btn {
+        background: var(--background-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        margin-left: auto;
+        color: var(--text-secondary);
+        transition: all 0.3s ease;
+        font-size: 0.75rem;
+      }
+
+      .help-btn:hover {
+        background: var(--background-primary);
+        color: var(--text-primary);
+        transform: scale(1.1);
+      }
+
+      /* Modal Components */
+      .modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      .modal-header h3 {
+        margin: 0;
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .modal-close {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 1rem;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .modal-close:hover {
+        background: var(--background-secondary);
+        color: var(--text-primary);
+      }
+
+      .modal-body {
+        padding: 1.5rem;
+      }
+
+      /* Additional utility classes */
+      .space-y-2 > * + * {
+        margin-top: 0.5rem;
+      }
+
+      .text-muted-foreground {
+        color: var(--text-muted);
+      }
+
+      .text-2xl {
+        font-size: 1.5rem;
+      }
+
+      .text-destructive {
+        color: var(--danger-color);
+      }
+
+      /* Result classes */
+      .result-main {
+        font-size: 1.125rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+
+      .result-secondary {
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .result-note {
+        font-size: 0.875rem;
+        opacity: 0.8;
+      }
+
+      /* Loading container */
+      .loading-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 1rem;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .container {
+          padding: 0 0.5rem;
+        }
+
+        .main-grid {
+          gap: 1rem;
+          margin-top: 1rem;
+        }
+
+        .card-content {
+          padding: 1rem;
+        }
+
+        .game-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .calculator-tabs {
+          flex-direction: column;
+        }
+
+        .parlay-stats {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* High Probability Filter Styles */
+      .high-prob-container {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: var(--background-secondary);
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+      }
+
+      .high-prob-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .high-prob-header h4 {
+        margin: 0;
+        color: var(--text-primary);
+        font-size: 1rem;
+      }
+
+      .high-prob-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        background: var(--background-card);
+        border-radius: 6px;
+        margin-bottom: 0.5rem;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+      }
+
+      .high-prob-item:hover {
+        background: var(--background-primary);
+        transform: translateX(3px);
+      }
+
+      .high-prob-item .team-name {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+      }
+
+      .high-prob-item .game-title {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+
+      .prob-odds {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.25rem;
+      }
+
+      .prob-odds .probability {
+        font-weight: 700;
+        color: var(--success-color);
+        font-size: 0.9rem;
+      }
+
+      .prob-odds .odds {
+        color: var(--primary-color);
+        font-weight: 600;
+        font-size: 0.85rem;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: var(--border-color);
+        outline: none;
+        -webkit-appearance: none;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        cursor: pointer;
+        box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+      }
+
+      input[type="range"]::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+      }
+
+      /* Enhanced Slider Styles */
+      .slider-container {
+        position: relative;
+        margin: 1rem 0;
+        padding: 1rem 0 2rem 0;
+      }
+
+      .enhanced-slider {
+        width: 100%;
+        height: 8px;
+        border-radius: 4px;
+        background: transparent;
+        outline: none;
+        -webkit-appearance: none;
+        position: relative;
+        z-index: 3;
+      }
+
+      .enhanced-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        border: 3px solid white;
+        transition: all 0.3s ease;
+      }
+
+      .enhanced-slider::-webkit-slider-thumb:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.6);
+      }
+
+      .enhanced-slider::-moz-range-thumb {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        cursor: pointer;
+        border: 3px solid white;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        transition: all 0.3s ease;
+      }
+
+      .enhanced-slider::-moz-range-thumb:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.6);
+      }
+
+      .slider-track {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 100%;
+        height: 8px;
+        background: var(--border-color);
+        border-radius: 4px;
+        z-index: 1;
+      }
+
+      .slider-progress {
+        height: 100%;
+        background: linear-gradient(90deg, #fde68a, #f59e0b, #d97706);
+        border-radius: 4px;
+        transition: width 0.3s ease;
+        position: relative;
+      }
+
+      .slider-progress::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.1)
+        );
+        border-radius: 4px;
+      }
+
+      .slider-ticks {
+        position: absolute;
+        top: 100%;
+        width: 100%;
+        margin-top: 0.5rem;
+        z-index: 2;
+      }
+
+      .tick {
+        position: absolute;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        transform: translateX(-50%);
+        font-weight: 500;
+      }
+
+      .tick:first-child {
+        transform: translateX(0);
+      }
+
+      .tick:last-child {
+        transform: translateX(-100%);
+      }
+
+      /* Current Value Display */
+      .current-value-display {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 1rem 0;
+        padding: 1rem;
+        background: var(--background-secondary);
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+      }
+
+      .current-value-display #currentProbability {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        margin-bottom: 0.25rem;
+      }
+
+      .value-label {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+
+      /* Preset Buttons */
+      .preset-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        margin: 1rem 0;
+      }
+
+      .preset-btn {
+        padding: 0.75rem 1rem;
+        background: var(--background-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        color: var(--text-primary);
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+      }
+
+      .preset-btn:hover {
+        background: var(--background-primary);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        transform: translateY(-1px);
+      }
+
+      .preset-btn.active {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+      }
+
+      /* Filter Options */
+      .filter-options {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        cursor: pointer;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      .checkbox-label input[type="checkbox"] {
+        display: none;
+      }
+
+      .checkmark {
+        width: 20px;
+        height: 20px;
+        background: var(--background-secondary);
+        border: 2px solid var(--border-color);
+        border-radius: 4px;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .checkbox-label:hover .checkmark {
+        border-color: var(--primary-color);
+        background: var(--background-primary);
+      }
+
+      .checkbox-label input[type="checkbox"]:checked + .checkmark {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+      }
+
+      .checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+        content: "";
+        position: absolute;
+        left: 6px;
+        top: 2px;
+        width: 4px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+
+      /* Responsive Design for Slider */
+      @media (max-width: 768px) {
+        .preset-buttons {
+          grid-template-columns: 1fr;
+        }
+
+        .enhanced-slider::-webkit-slider-thumb {
+          width: 20px;
+          height: 20px;
+        }
+
+        .enhanced-slider::-moz-range-thumb {
+          width: 20px;
+          height: 20px;
+        }
+
+        .current-value-display #currentProbability {
+          font-size: 1.5rem;
+        }
+      }
+
+      /* Top Picks Sticky Bar */
+      .top-picks-bar {
+        position: sticky;
+        top: 64px;
+        z-index: 95;
+        background: var(--background-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        box-shadow: var(--shadow-dark);
+        margin-top: 1rem;
+      }
+
+      .top-picks-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+      }
+
+      .top-picks-title {
+        font-weight: 800;
+        letter-spacing: 0.2px;
+      }
+
+      .pick-chips {
+        display: flex;
+        gap: 0.5rem;
+        overflow-x: auto;
+        padding-bottom: 0.25rem;
+      }
+
+      .pick-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 0.75rem;
+        background: var(--background-card);
+        border: 1px solid var(--border-light);
+        border-radius: 9999px;
+        white-space: nowrap;
+        font-weight: 700;
+      }
+
+      .pick-chip .prob {
+        color: var(--success-color);
+        font-weight: 800;
+      }
+
+      .pick-chip .odds {
+        color: var(--primary-color);
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="container">
+        <div class="navbar-content">
+          <a href="#" class="navbar-brand">
+            <i class="fas fa-chart-line"></i>
+            Kyuri
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+      <div id="topPicksBar" class="top-picks-bar" style="display: none">
+        <div class="top-picks-header">
+          <div class="top-picks-title">🔥 High-Probability Picks</div>
+          <div id="topPicksCount" class="alert-count">0</div>
+        </div>
+        <div id="topPicksChips" class="pick-chips"></div>
+      </div>
+      <div class="main-grid">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+          <!-- Sports Selection Card -->
+          <div class="glass-card">
+            <div class="card-header">
+              <h3 class="card-title">🏈 Sports Selection</h3>
+              <p class="card-description">
+                Select a sport to analyze betting odds and discover
+                opportunities
+              </p>
+            </div>
+            <div class="card-content">
+              <div class="form-group">
+                <label for="sportSelector" class="form-label"
+                  >Choose Sport</label
+                >
+                <select id="sportSelector" class="select" disabled>
+                  <option value="" disabled selected>Loading sports...</option>
+                </select>
+              </div>
+              <div
+                class="form-group"
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  gap: 0.75rem;
+                "
+              >
+                <button id="fetchOddsBtn" class="btn btn-primary" disabled>
+                  <i class="fas fa-sync-alt"></i>
+                  Fetch Odds
+                </button>
+                <label class="checkbox-label" style="margin: 0">
+                  <input type="checkbox" id="todayOnlyToggle" checked />
+                  <span class="checkmark"></span>
+                  Today only
+                </label>
+              </div>
+              <div class="loading-container">
+                <div id="loadingSpinner" class="loading-spinner"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- High Probability Filter Card -->
+          <div class="glass-card">
+            <div class="card-header">
+              <h3 class="card-title">🎯 High Probability Filter</h3>
+              <p class="card-description">
+                Advanced filtering for high-confidence betting opportunities
+              </p>
+            </div>
+            <div class="card-content">
+              <div class="form-group">
+                <label for="probabilityThreshold" class="form-label">
+                  Minimum Probability (%)
+                </label>
+
+                <!-- Enhanced Slider -->
+                <div class="slider-container">
+                  <input
+                    type="range"
+                    id="probabilityThreshold"
+                    class="enhanced-slider"
+                    min="30"
+                    max="99"
+                    value="65"
+                    step="1"
+                    oninput="updateProbabilityDisplay(this.value)"
+                  />
+                  <div class="slider-track">
+                    <div class="slider-progress" id="sliderProgress"></div>
+                  </div>
+                  <div class="slider-ticks">
+                    <span class="tick" style="left: 0%">30%</span>
+                    <span class="tick" style="left: 14.3%">40%</span>
+                    <span class="tick" style="left: 28.6%">50%</span>
+                    <span class="tick" style="left: 42.9%">60%</span>
+                    <span class="tick" style="left: 57.1%">70%</span>
+                    <span class="tick" style="left: 71.4%">80%</span>
+                    <span class="tick" style="left: 85.7%">90%</span>
+                    <span class="tick" style="left: 100%">99%</span>
+                  </div>
+                </div>
+
+                <!-- Current Value Display -->
+                <div class="current-value-display">
+                  <span id="currentProbability">65%</span>
+                  <span class="value-label">Minimum Probability</span>
+                </div>
+
+                <!-- Preset Buttons -->
+                <div class="preset-buttons">
+                  <button class="preset-btn" onclick="setPresetValue(50)">
+                    Conservative (50%)
+                  </button>
+                  <button class="preset-btn" onclick="setPresetValue(65)">
+                    Balanced (65%)
+                  </button>
+                  <button class="preset-btn" onclick="setPresetValue(75)">
+                    Aggressive (75%)
+                  </button>
+                  <button class="preset-btn" onclick="setPresetValue(85)">
+                    Ultra-Safe (85%)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Filter Options -->
+              <div class="form-group">
+                <label class="form-label">Filter Options</label>
+                <div class="filter-options">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="autoFilter" checked />
+                    <span class="checkmark"></span>
+                    Auto-apply on change
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="sortByProb" checked />
+                    <span class="checkmark"></span>
+                    Sort by probability
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <button
+                  id="applyFilterBtn"
+                  class="btn btn-secondary btn-full"
+                  onclick="applyProbabilityFilter()"
+                >
+                  <i class="fas fa-filter"></i>
+                  Apply Filter
+                </button>
+                <button
+                  id="clearFilterBtn"
+                  class="btn btn-outline btn-full"
+                  onclick="clearProbabilityFilter()"
+                  style="margin-top: 0.5rem"
+                >
+                  <i class="fas fa-times"></i>
+                  Clear Filter
+                </button>
+              </div>
+
+              <div
+                id="highProbGames"
+                class="high-prob-container"
+                style="display: none"
+              >
+                <div class="high-prob-header">
+                  <h4>🔥 High Probability Games</h4>
+                  <span id="highProbCount" class="alert-count">0</span>
+                </div>
+                <div id="highProbList" class="space-y-2">
+                  <!-- High probability games will be populated here -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Updates Section -->
+          <div class="glass-card">
+            <div class="card-header">
+              <h3 class="card-title">📡 Live Updates</h3>
+              <button class="help-btn" onclick="showHelp()">?</button>
+            </div>
+            <div class="card-content">
+              <div class="live-status">
+                <span class="status-indicator" id="statusIndicator"></span>
+                <span id="updateStatus">Live Updates: OFF</span>
+              </div>
+              <button
+                id="toggleUpdatesBtn"
+                class="btn btn-outline btn-full"
+                onclick="toggleLiveUpdates()"
+              >
+                <i class="fas fa-play"></i>
+                Start Live Updates
+              </button>
+            </div>
+          </div>
+
+          <!-- Calculators Card -->
+          <div class="glass-card">
+            <div class="card-header">
+              <h3 class="card-title">🧮 Betting Calculators</h3>
+              <p class="card-description">
+                Professional betting analysis tools and strategies
+              </p>
+            </div>
+            <div class="card-content">
+              <div class="calculator-tabs">
+                <button
+                  class="calc-tab active"
+                  onclick="showCalculator('kelly')"
+                >
+                  Kelly
+                </button>
+                <button class="calc-tab" onclick="showCalculator('arbitrage')">
+                  Arbitrage
+                </button>
+                <button class="calc-tab" onclick="showCalculator('hedge')">
+                  Hedge
+                </button>
+                <button class="calc-tab" onclick="showCalculator('expected')">
+                  EV
+                </button>
+                <button class="calc-tab" onclick="showCalculator('bankroll')">
+                  Bankroll
+                </button>
+              </div>
+
+              <!-- Kelly Calculator -->
+              <div id="kelly-calculator" class="calculator active">
+                <h4><i class="fas fa-calculator"></i> Kelly Criterion</h4>
+                <div class="form-group">
+                  <label class="form-label">Bankroll ($)</label>
+                  <input
+                    type="number"
+                    id="kelly-bankroll"
+                    class="input"
+                    placeholder="1000"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Decimal Odds</label>
+                  <input
+                    type="number"
+                    id="kelly-odds"
+                    class="input"
+                    placeholder="2.5"
+                    step="0.01"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Win Probability (%)</label>
+                  <input
+                    type="number"
+                    id="kelly-prob"
+                    class="input"
+                    placeholder="45"
+                    min="0"
+                    max="100"
+                  />
+                </div>
+                <button
+                  onclick="calculateKelly()"
+                  class="btn btn-primary btn-full"
+                >
+                  <i class="fas fa-chart-line"></i>
+                  Calculate Kelly
+                </button>
+                <div id="kelly-result" class="calc-result"></div>
+              </div>
+
+              <!-- Arbitrage Calculator -->
+              <div id="arbitrage-calculator" class="calculator">
+                <h4><i class="fas fa-balance-scale"></i> Arbitrage</h4>
+                <div class="form-group">
+                  <label class="form-label">Stake ($)</label>
+                  <input
+                    type="number"
+                    id="arb-stake"
+                    class="input"
+                    placeholder="100"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Odds A</label>
+                  <input
+                    type="number"
+                    id="arb-odds-a"
+                    class="input"
+                    placeholder="2.1"
+                    step="0.01"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Odds B</label>
+                  <input
+                    type="number"
+                    id="arb-odds-b"
+                    class="input"
+                    placeholder="2.2"
+                    step="0.01"
+                  />
+                </div>
+                <button
+                  onclick="calculateArbitrage()"
+                  class="btn btn-primary btn-full"
+                >
+                  <i class="fas fa-calculator"></i>
+                  Calculate Arbitrage
+                </button>
+                <div id="arbitrage-result" class="calc-result"></div>
+              </div>
+
+              <!-- Hedge Calculator -->
+              <div id="hedge-calculator" class="calculator">
+                <h4><i class="fas fa-shield-alt"></i> Hedge</h4>
+                <div class="form-group">
+                  <label class="form-label">Original Bet ($)</label>
+                  <input
+                    type="number"
+                    id="hedge-original-bet"
+                    class="input"
+                    placeholder="100"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Original Odds</label>
+                  <input
+                    type="number"
+                    id="hedge-original-odds"
+                    class="input"
+                    placeholder="5.0"
+                    step="0.01"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Hedge Odds</label>
+                  <input
+                    type="number"
+                    id="hedge-odds-hedge"
+                    class="input"
+                    placeholder="1.5"
+                    step="0.01"
+                  />
+                </div>
+                <button
+                  onclick="calculateHedge()"
+                  class="btn btn-primary btn-full"
+                >
+                  <i class="fas fa-umbrella"></i>
+                  Calculate Hedge
+                </button>
+                <div id="hedge-result" class="calc-result"></div>
+              </div>
+
+              <!-- Expected Value Calculator -->
+              <div id="expected-calculator" class="calculator">
+                <h4><i class="fas fa-trending-up"></i> Expected Value</h4>
+                <div class="form-group">
+                  <label class="form-label">Bet Amount ($)</label>
+                  <input
+                    type="number"
+                    id="ev-bet"
+                    class="input"
+                    placeholder="50"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Decimal Odds</label>
+                  <input
+                    type="number"
+                    id="ev-odds"
+                    class="input"
+                    placeholder="2.5"
+                    step="0.01"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Win Probability (%)</label>
+                  <input
+                    type="number"
+                    id="ev-prob"
+                    class="input"
+                    placeholder="45"
+                    min="0"
+                    max="100"
+                  />
+                </div>
+                <button
+                  onclick="calculateExpectedValue()"
+                  class="btn btn-primary btn-full"
+                >
+                  <i class="fas fa-calculator"></i>
+                  Calculate EV
+                </button>
+                <div id="expected-result" class="calc-result"></div>
+              </div>
+
+              <!-- Bankroll Calculator -->
+              <div id="bankroll-calculator" class="calculator">
+                <h4><i class="fas fa-piggy-bank"></i> Bankroll Management</h4>
+                <div class="form-group">
+                  <label class="form-label">Total Bankroll ($)</label>
+                  <input
+                    type="number"
+                    id="bankroll-total"
+                    class="input"
+                    placeholder="5000"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Risk per Bet (%)</label>
+                  <input
+                    type="number"
+                    id="bankroll-risk"
+                    class="input"
+                    placeholder="2"
+                    min="0.1"
+                    max="10"
+                    step="0.1"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Number of Bets</label>
+                  <input
+                    type="number"
+                    id="bankroll-bets"
+                    class="input"
+                    placeholder="100"
+                    min="1"
+                  />
+                </div>
+                <button
+                  onclick="calculateBankroll()"
+                  class="btn btn-primary btn-full"
+                >
+                  <i class="fas fa-chart-pie"></i>
+                  Calculate Management
+                </button>
+                <div id="bankroll-result" class="calc-result"></div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+          <div class="glass-card">
+            <div class="card-content">
+              <div id="oddsTableContainer">
+                <div class="welcome-state">
+                  <i class="fas fa-chart-line"></i>
+                  <h3>Welcome to Kyuri</h3>
+                  <p>
+                    Your premium sports betting analyzer. Select a sport to
+                    discover profitable opportunities and make data-driven
+                    decisions.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Parlay Card -->
+          <div
+            id="parlayCard"
+            class="glass-card parlay-card"
+            style="display: none"
+          >
+            <div class="parlay-header">
+              <i class="fas fa-layer-group"></i>
+              🎯 Suggested Parlay
+            </div>
+            <div class="card-content">
+              <div id="parlayContent">
+                <!-- Parlay content will be populated by JavaScript -->
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Help Guide</h3>
+          <button class="modal-close" onclick="closeHelp()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="help-section">
+            <h4>Status Indicators</h4>
+            <div class="indicator-guide">
+              <div class="indicator-item">
+                <span class="status-indicator offline"></span>
+                <div>
+                  <strong>Offline</strong>
+                  <p>Live updates are not active</p>
+                </div>
+              </div>
+              <div class="indicator-item">
+                <span class="status-indicator online"></span>
+                <div>
+                  <strong>Online</strong>
+                  <p>Monitoring for opportunities</p>
+                </div>
+              </div>
+              <div class="indicator-item">
+                <span class="status-indicator updating"></span>
+                <div>
+                  <strong>Updating</strong>
+                  <p>Fetching latest odds data</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="help-section">
+            <h4>Line Movement</h4>
+            <div class="movement-guide">
+              <div class="movement-item">
+                <span class="odds-movement up">+0.15</span>
+                <div>
+                  <strong>Odds Increased</strong>
+                  <p>Line moved in favor of this outcome</p>
+                </div>
+              </div>
+              <div class="movement-item">
+                <span class="odds-movement down">-0.08</span>
+                <div>
+                  <strong>Odds Decreased</strong>
+                  <p>Line moved against this outcome</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="help-section">
+            <h4>Alert Types</h4>
+            <div class="alert-guide">
+              <div class="alert-item">
+                <i
+                  class="fas fa-balance-scale"
+                  style="color: hsl(var(--success))"
+                ></i>
+                <div>
+                  <strong>Arbitrage Opportunity</strong>
+                  <p>
+                    When you can bet on all outcomes and guarantee profit
+                    regardless of result
+                  </p>
+                </div>
+              </div>
+              <div class="alert-item">
+                <i
+                  class="fas fa-fire"
+                  style="color: hsl(var(--destructive))"
+                ></i>
+                <div>
+                  <strong>Steam Movement</strong>
+                  <p>
+                    When multiple bookmakers move odds in the same direction,
+                    indicating sharp money
+                  </p>
+                </div>
+              </div>
+              <div class="alert-item">
+                <i
+                  class="fas fa-chart-line"
+                  style="color: hsl(var(--warning))"
+                ></i>
+                <div>
+                  <strong>Line Movement</strong>
+                  <p>
+                    Significant odds changes that may indicate value
+                    opportunities
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const sportSelector = document.getElementById("sportSelector");
+        const fetchOddsBtn = document.getElementById("fetchOddsBtn");
+        const oddsTableContainer =
+          document.getElementById("oddsTableContainer");
+        const loadingSpinner = document.getElementById("loadingSpinner");
+        const parlayCard = document.getElementById("parlayCard");
+        const parlayContent = document.getElementById("parlayContent");
+
+        // Real-time odds variables
+        let currentSport = null;
+        let oddsUpdateInterval = null;
+        let previousOddsData = {};
+        let isLiveUpdating = false;
+
+        // Alerts system variables
+        let alertsData = [];
+        let alertIdCounter = 0;
+        let steamThreshold = 2; // Number of books that need to move in same direction
+        let lineMovementThreshold = 0.1; // Minimum movement to trigger alert
+
+        // Fetch available sports when page loads
+        fetchSports();
+
+        // Fetch Sports Function
+        async function fetchSports() {
+          try {
+            const response = await fetch("/api/sports");
+            const sports = await response.json();
+
+            sportSelector.innerHTML =
+              '<option value="" disabled selected>Select a sport...</option>';
+
+            sports.forEach((sport) => {
+              const option = document.createElement("option");
+              option.value = sport.key;
+              option.textContent = sport.title;
+              sportSelector.appendChild(option);
+            });
+
+            // Enable the sports selector after loading
+            sportSelector.disabled = false;
+          } catch (error) {
+            console.error("Error fetching sports:", error);
+            sportSelector.innerHTML =
+              '<option value="" disabled selected>Error loading sports</option>';
+          }
+        }
+
+        // Fetch Odds Function
+        async function fetchOdds(sportKey) {
+          if (!sportKey) return;
+
+          loadingSpinner.style.display = "flex";
+          fetchOddsBtn.disabled = true;
+
+          try {
+            const [oddsResponse, parlayResponse] = await Promise.all([
+              fetch(`/api/odds/${sportKey}`),
+              fetch(`/api/parlay/${sportKey}`),
+            ]);
+
+            const oddsData = await oddsResponse.json();
+            const parlayData = await parlayResponse.json();
+
+            displayOdds(oddsData);
+            displayParlay(parlayData);
+
+            currentSport = sportKey;
+
+            // Store current odds for comparison
+            previousOddsData = oddsData;
+            // Auto-apply probability filter to populate Top Picks
+            const autoFilter = document.getElementById("autoFilter");
+            if (autoFilter && autoFilter.checked) {
+              applyProbabilityFilter();
+            }
+          } catch (error) {
+            console.error("Error fetching odds:", error);
+            displayError("Error fetching odds. Please try again.");
+          } finally {
+            loadingSpinner.style.display = "none";
+            fetchOddsBtn.disabled = false;
+          }
+        }
+
+        // Display Odds Function
+        function displayOdds(oddsData) {
+          const container = oddsTableContainer;
+
+          if (oddsData.error) {
+            container.innerHTML = `
+              <div class="card">
+                <div class="card-content">
+                  <p class="text-center">${oddsData.error}</p>
+                </div>
+              </div>
+            `;
+            return;
+          }
+
+          if (!oddsData.events || oddsData.events.length === 0) {
+            container.innerHTML = `
+              <div class="card">
+                <div class="card-content">
+                  <p class="text-center">No upcoming events found for this sport.</p>
+                </div>
+              </div>
+            `;
+            return;
+          }
+
+          // Optional today-only filter
+          const todayOnly = document.getElementById("todayOnlyToggle")?.checked;
+          let events = oddsData.events;
+          if (todayOnly) {
+            events = events.filter((e) => e.is_today);
+          }
+
+          if (!events.length) {
+            container.innerHTML = `
+              <div class="glass-card">
+                <div class="card-content">
+                  <p class="text-center">${
+                    todayOnly ? "No games today." : "No games found."
+                  }</p>
+                </div>
+              </div>
+            `;
+            return;
+          }
+
+          // Group by date_iso
+          const byDate = events.reduce((acc, ev) => {
+            const key = ev.date_iso || "Unknown";
+            (acc[key] ||= []).push(ev);
+            return acc;
+          }, {});
+
+          const sortedDates = Object.keys(byDate).sort();
+          container.innerHTML = "";
+
+          sortedDates.forEach((dateKey) => {
+            const dateEvents = byDate[dateKey];
+            const first = dateEvents[0];
+            const isToday = !!first.is_today;
+            let nice = dateKey;
+            try {
+              const d = new Date(`${dateKey}T00:00:00`);
+              const opts = { weekday: "long", month: "short", day: "numeric" };
+              nice = d.toLocaleDateString(undefined, opts);
+            } catch (e) {}
+
+            const header = document.createElement("div");
+            header.className = "date-header";
+            header.innerHTML = `
+              <div class="date-title">${isToday ? "Today — " : ""}${nice}</div>
+              <span class="date-pill">${dateEvents.length} game${
+              dateEvents.length > 1 ? "s" : ""
+            }</span>
+            `;
+            container.appendChild(header);
+
+            dateEvents.forEach((event) => {
+              const gameCard = createGameCard(event);
+              container.appendChild(gameCard);
+            });
+          });
+        }
+
+        // Create Game Card Function
+        function createGameCard(event) {
+          const card = document.createElement("div");
+          card.className = "glass-card game-card";
+
+          const suggestion = event.suggestion || {};
+          const hasSuggestion = suggestion.team && suggestion.probability;
+
+          card.innerHTML = `
+            <div class="game-header">
+              <div class="game-info">
+                <div class="game-title">${event.home_team} vs ${
+            event.away_team
+          }</div>
+                ${
+                  event.tournament
+                    ? `<div class="game-tournament">${event.tournament}</div>`
+                    : ""
+                }
+                <div class="game-time">
+                  <i class="fas fa-clock"></i>
+                  ${event.time}
+                </div>
+              </div>
+              ${
+                hasSuggestion
+                  ? `
+                <div class="suggestion-badge">
+                  Best: ${suggestion.team} (${suggestion.probability}% implied prob)
+                </div>
+              `
+                  : ""
+              }
+            </div>
+            ${event.bookmakers
+              .map(
+                (bookmaker) => `
+              <div class="bookmaker-section">
+                <div class="bookmaker-name">
+                  <i class="fas fa-store"></i>
+                  ${bookmaker.name}
+                </div>
+                <div class="odds-grid">
+                  ${bookmaker.markets
+                    .filter((market) => market.key === "h2h")
+                    .map((market) => {
+                      // Sort outcomes by probability in descending order (highest first)
+                      const sortedOutcomes = [...market.outcomes].sort(
+                        (a, b) => b.probability - a.probability
+                      );
+                      return sortedOutcomes
+                        .map(
+                          (outcome) => `
+                        <div class="team-odds">
+                          <div class="team-info">
+                            <span class="team-name">${outcome.name}</span>
+                            <div class="probability-bar">
+                              <div class="probability-fill" style="width: ${outcome.probability}%"></div>
+                            </div>
+                          </div>
+                          <div class="odds-info">
+                            <span class="odds-price">${outcome.price}</span>
+                            <span class="odds-probability">${outcome.probability}%</span>
+                          </div>
+                        </div>
+                      `
+                        )
+                        .join("");
+                    })
+                    .join("")}
+                </div>
+              </div>
+            `
+              )
+              .join("")}
+          `;
+
+          return card;
+        }
+
+        // Display Parlay Function
+        function displayParlay(parlayData) {
+          if (
+            parlayData.error ||
+            !parlayData.teams ||
+            parlayData.teams.length === 0
+          ) {
+            parlayCard.style.display = "none";
+            return;
+          }
+
+          parlayContent.innerHTML = `
+            ${parlayData.teams
+              .map(
+                (team) => `
+              <div class="parlay-team">
+                <div class="team-name">${team.team}</div>
+                <div class="team-details">
+                  <span class="odds">Odds: ${team.odds}</span>
+                  <span class="prob">Probability: ${team.probability.toFixed(
+                    1
+                  )}%</span>
+                </div>
+                <div class="game-info" style="font-size: 0.8rem; color: hsl(var(--muted-foreground)); margin-top: 0.5rem;">
+                  ${team.game}
+                </div>
+              </div>
+            `
+              )
+              .join("")}
+            <div class="parlay-stats">
+              <div class="stat-item">
+                <div class="stat-value">${parlayData.combined_odds}</div>
+                <div class="stat-label">Combined Odds</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">${parlayData.implied_probability.toFixed(
+                  1
+                )}%</div>
+                <div class="stat-label">Total Probability</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">$${parlayData.potential_winnings}</div>
+                <div class="stat-label">Potential Payout ($10 bet)</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">${parlayData.num_legs}</div>
+                <div class="stat-label"># of Legs</div>
+              </div>
+            </div>
+          `;
+
+          parlayCard.style.display = "block";
+        }
+
+        // Display Error Function
+        function displayError(message) {
+          oddsTableContainer.innerHTML = `
+            <div class="glass-card">
+              <div class="card-content">
+                <p class="text-center text-destructive">${message}</p>
+              </div>
+            </div>
+          `;
+        }
+
+        // Event Listeners
+        fetchOddsBtn.addEventListener("click", function () {
+          const selectedSport = sportSelector.value;
+          if (selectedSport) {
+            fetchOdds(selectedSport);
+          } else {
+            alert("Please select a sport first.");
+          }
+        });
+
+        sportSelector.addEventListener("change", function () {
+          // Enable fetch button when sport is selected
+          fetchOddsBtn.disabled = false;
+        });
+
+        // Global functions for inline event handlers
+        window.calculateKelly = function () {
+          const bankroll = parseFloat(
+            document.getElementById("kelly-bankroll").value
+          );
+          const odds = parseFloat(document.getElementById("kelly-odds").value);
+          const prob =
+            parseFloat(document.getElementById("kelly-prob").value) / 100;
+
+          if (!bankroll || !odds || !prob) {
+            document.getElementById("kelly-result").innerHTML =
+              '<div class="error">Please fill in all fields</div>';
+            return;
+          }
+
+          const kellyFraction = (prob * odds - 1) / (odds - 1);
+          const betAmount = bankroll * kellyFraction;
+
+          let resultClass = "positive";
+          let recommendation = "";
+
+          if (kellyFraction <= 0) {
+            resultClass = "negative";
+            recommendation = "No bet recommended";
+          } else if (kellyFraction > 0.25) {
+            resultClass = "warning";
+            recommendation = "Very high risk - consider smaller bet";
+          } else {
+            recommendation = "Bet recommended";
+          }
+
+          document.getElementById("kelly-result").innerHTML = `
+            <div class="result ${resultClass}">
+              <div class="result-main">Kelly %: ${(kellyFraction * 100).toFixed(
+                2
+              )}%</div>
+              <div class="result-secondary">Suggested Bet: $${betAmount.toFixed(
+                2
+              )}</div>
+              <div class="result-note">${recommendation}</div>
+            </div>
+          `;
+          document.getElementById("kelly-result").classList.add("show");
+        };
+
+        window.calculateArbitrage = function () {
+          const stake = parseFloat(document.getElementById("arb-stake").value);
+          const odds1 = parseFloat(document.getElementById("arb-odds-a").value);
+          const odds2 = parseFloat(document.getElementById("arb-odds-b").value);
+
+          if (!stake || !odds1 || !odds2) {
+            document.getElementById("arbitrage-result").innerHTML =
+              '<div class="error">Please fill in all fields</div>';
+            return;
+          }
+
+          const impliedProb1 = 1 / odds1;
+          const impliedProb2 = 1 / odds2;
+          const totalImplied = impliedProb1 + impliedProb2;
+
+          const bet1 = stake * (impliedProb1 / totalImplied);
+          const bet2 = stake * (impliedProb2 / totalImplied);
+
+          const profit1 = bet1 * odds1 - stake;
+          const profit2 = bet2 * odds2 - stake;
+
+          let resultClass = totalImplied < 1 ? "positive" : "negative";
+          let profitPercent = (
+            (Math.min(profit1, profit2) / stake) *
+            100
+          ).toFixed(2);
+
+          document.getElementById("arbitrage-result").innerHTML = `
+            <div class="result ${resultClass}">
+              <div class="result-main">
+                ${
+                  totalImplied < 1
+                    ? "Arbitrage Opportunity!"
+                    : "No Arbitrage Available"
+                }
+              </div>
+              <div class="result-secondary">
+                Bet 1: $${bet1.toFixed(2)} | Bet 2: $${bet2.toFixed(2)}
+              </div>
+              <div class="result-note">
+                ${
+                  totalImplied < 1
+                    ? `Guaranteed Profit: ${profitPercent}%`
+                    : "Total implied probability > 100%"
+                }
+              </div>
+            </div>
+          `;
+          document.getElementById("arbitrage-result").classList.add("show");
+        };
+
+        window.calculateHedge = function () {
+          const originalBet = parseFloat(
+            document.getElementById("hedge-original-bet").value
+          );
+          const originalOdds = parseFloat(
+            document.getElementById("hedge-original-odds").value
+          );
+          const hedgeOdds = parseFloat(
+            document.getElementById("hedge-odds-hedge").value
+          );
+
+          if (!originalBet || !originalOdds || !hedgeOdds) {
+            document.getElementById("hedge-result").innerHTML =
+              '<div class="error">Please fill in all fields</div>';
+            return;
+          }
+
+          const potentialWin = originalBet * (originalOdds - 1);
+          const hedgeBet = potentialWin / hedgeOdds;
+          const guaranteedProfit = potentialWin - hedgeBet;
+
+          document.getElementById("hedge-result").innerHTML = `
+            <div class="result positive">
+              <div class="result-main">Hedge Bet: $${hedgeBet.toFixed(2)}</div>
+              <div class="result-secondary">Guaranteed Profit: $${guaranteedProfit.toFixed(
+                2
+              )}</div>
+              <div class="result-note">Risk-free profit regardless of outcome</div>
+            </div>
+          `;
+          document.getElementById("hedge-result").classList.add("show");
+        };
+
+        window.calculateExpectedValue = function () {
+          const betAmount = parseFloat(document.getElementById("ev-bet").value);
+          const odds = parseFloat(document.getElementById("ev-odds").value);
+          const prob =
+            parseFloat(document.getElementById("ev-prob").value) / 100;
+
+          if (!betAmount || !odds || !prob) {
+            document.getElementById("expected-result").innerHTML =
+              '<div class="error">Please fill in all fields</div>';
+            return;
+          }
+
+          const winAmount = betAmount * (odds - 1);
+          const expectedValue = prob * winAmount - (1 - prob) * betAmount;
+          const evPercent = (expectedValue / betAmount) * 100;
+
+          let resultClass = expectedValue > 0 ? "positive" : "negative";
+
+          document.getElementById("expected-result").innerHTML = `
+            <div class="result ${resultClass}">
+              <div class="result-main">EV: $${expectedValue.toFixed(2)}</div>
+              <div class="result-secondary">EV%: ${evPercent.toFixed(2)}%</div>
+              <div class="result-note">
+                ${
+                  expectedValue > 0
+                    ? "Positive expected value bet"
+                    : "Negative expected value bet"
+                }
+              </div>
+            </div>
+          `;
+          document.getElementById("expected-result").classList.add("show");
+        };
+
+        window.calculateBankroll = function () {
+          const bankroll = parseFloat(
+            document.getElementById("bankroll-total").value
+          );
+          const riskPerBet =
+            parseFloat(document.getElementById("bankroll-risk").value) / 100;
+          const numBets = parseInt(
+            document.getElementById("bankroll-bets").value
+          );
+
+          if (!bankroll || !riskPerBet || !numBets) {
+            document.getElementById("bankroll-result").innerHTML =
+              '<div class="error">Please fill in all fields</div>';
+            return;
+          }
+
+          const betSize = bankroll * riskPerBet;
+          const totalRisk = betSize * numBets;
+          const riskOfRuin = Math.pow(1 - riskPerBet, numBets) * 100;
+
+          let resultClass = totalRisk < bankroll * 0.5 ? "positive" : "warning";
+
+          document.getElementById("bankroll-result").innerHTML = `
+            <div class="result ${resultClass}">
+              <div class="result-main">Bet Size: $${betSize.toFixed(2)}</div>
+              <div class="result-secondary">Total Risk: $${totalRisk.toFixed(
+                2
+              )}</div>
+              <div class="result-secondary">Risk of Ruin: ${riskOfRuin.toFixed(
+                1
+              )}%</div>
+              <div class="result-note">
+                ${
+                  resultClass === "positive"
+                    ? "Conservative bankroll management"
+                    : "High risk - consider reducing bet size"
+                }
+              </div>
+            </div>
+          `;
+          document.getElementById("bankroll-result").classList.add("show");
+        };
+
+        // Show Calculator Function
+        window.showCalculator = function (calcType) {
+          // Hide all calculators
+          const calculators = document.querySelectorAll(".calculator");
+          calculators.forEach((calc) => {
+            calc.classList.remove("active");
+          });
+
+          // Remove active class from all tabs
+          const tabs = document.querySelectorAll(".calc-tab");
+          tabs.forEach((tab) => {
+            tab.classList.remove("active");
+          });
+
+          // Show selected calculator
+          const selectedCalc = document.getElementById(
+            `${calcType}-calculator`
+          );
+          if (selectedCalc) {
+            selectedCalc.classList.add("active");
+          }
+
+          // Add active class to clicked tab
+          event.target.classList.add("active");
+        };
+
+        // Notification Form Functions
+        window.showNotificationForm = function (type) {
+          // Hide all forms
+          const forms = document.querySelectorAll(".notification-form");
+          forms.forEach((form) => {
+            form.classList.remove("active");
+          });
+
+          // Remove active class from all tabs
+          const tabs = document.querySelectorAll(
+            ".notification-tabs .calc-tab"
+          );
+          tabs.forEach((tab) => {
+            tab.classList.remove("active");
+          });
+
+          // Show selected form
+          const selectedForm = document.getElementById(`${type}-form`);
+          if (selectedForm) {
+            selectedForm.classList.add("active");
+          }
+
+          // Add active class to clicked tab
+          event.target.classList.add("active");
+        };
+
+        // Notification Functions
+        window.subscribeNotifications = function (type) {
+          const input =
+            type === "email"
+              ? document.getElementById("emailAddress").value
+              : document.getElementById("phoneNumber").value;
+
+          if (!input) {
+            showNotificationStatus(
+              "error",
+              `Please enter a valid ${
+                type === "email" ? "email address" : "phone number"
+              }`
+            );
+            return;
+          }
+
+          fetch("/api/notifications/subscribe", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              type: type,
+              contact: input,
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                showNotificationStatus(
+                  "success",
+                  `${type.toUpperCase()} alerts enabled successfully!`
+                );
+              } else {
+                showNotificationStatus(
+                  "error",
+                  data.message || "Failed to enable alerts"
+                );
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              showNotificationStatus("error", "Network error occurred");
+            });
+        };
+
+        window.testNotification = function (type) {
+          const input =
+            type === "email"
+              ? document.getElementById("emailAddress").value
+              : document.getElementById("phoneNumber").value;
+
+          if (!input) {
+            showNotificationStatus(
+              "error",
+              `Please enter a valid ${
+                type === "email" ? "email address" : "phone number"
+              }`
+            );
+            return;
+          }
+
+          fetch("/api/notifications/test", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              type: type,
+              contact: input,
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                showNotificationStatus(
+                  "success",
+                  `Test ${type} sent successfully!`
+                );
+              } else {
+                showNotificationStatus(
+                  "error",
+                  data.message || "Failed to send test"
+                );
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              showNotificationStatus("error", "Network error occurred");
+            });
+        };
+
+        function showNotificationStatus(type, message) {
+          const statusDiv = document.getElementById("notificationStatus");
+
+          statusDiv.innerHTML = `
+            <div class="alert alert-${type === "success" ? "info" : "danger"}">
+              <i class="fas fa-${
+                type === "success" ? "check-circle" : "exclamation-triangle"
+              }"></i>
+              ${message}
+            </div>
+          `;
+
+          statusDiv.style.display = "block";
+
+          // Hide after 5 seconds
+          setTimeout(() => {
+            statusDiv.style.display = "none";
+          }, 5000);
+        }
+
+        // Help Modal Functions
+        window.showHelp = function () {
+          const modal = document.getElementById("helpModal");
+          if (modal) {
+            modal.classList.add("show");
+          }
+        };
+
+        window.closeHelp = function () {
+          const modal = document.getElementById("helpModal");
+          if (modal) {
+            modal.classList.remove("show");
+          }
+        };
+
+        // Close modal when clicking outside
+        document
+          .getElementById("helpModal")
+          .addEventListener("click", function (e) {
+            if (e.target === this) {
+              window.closeHelp();
+            }
+          });
+
+        // Live Updates Variables and Functions
+        let liveUpdatesInterval = null;
+
+        // Toggle Live Updates
+        window.toggleLiveUpdates = function () {
+          const toggleBtn = document.getElementById("toggleUpdatesBtn");
+          const statusIndicator = document.getElementById("statusIndicator");
+          const updateStatus = document.getElementById("updateStatus");
+
+          if (isLiveUpdating) {
+            // Stop live updates
+            clearInterval(liveUpdatesInterval);
+            isLiveUpdating = false;
+            toggleBtn.innerHTML =
+              '<i class="fas fa-play"></i> Start Live Updates';
+            toggleBtn.className = "btn btn-outline btn-full";
+            statusIndicator.className = "status-indicator offline";
+            updateStatus.textContent = "Live Updates: OFF";
+          } else {
+            // Start live updates
+            if (!currentSport) {
+              alert("Please select a sport first");
+              return;
+            }
+
+            isLiveUpdating = true;
+            toggleBtn.innerHTML =
+              '<i class="fas fa-pause"></i> Stop Live Updates';
+            toggleBtn.className = "btn btn-warning btn-full";
+            statusIndicator.className = "status-indicator online";
+            updateStatus.textContent = "Live Updates: ON";
+
+            // Start interval to fetch odds every 60 seconds
+            liveUpdatesInterval = setInterval(() => {
+              if (currentSport) {
+                statusIndicator.className = "status-indicator updating";
+                updateStatus.textContent = "Updating...";
+                fetchOdds(currentSport).then(() => {
+                  statusIndicator.className = "status-indicator online";
+                  updateStatus.textContent = "Live Updates: ON";
+                });
+              }
+            }, 60000);
+          }
+        };
+
+        // Update Probability Display
+        window.updateProbabilityDisplay = function (value) {
+          document.getElementById("currentProbability").textContent =
+            value + "%";
+
+          // Update slider progress bar
+          const progress = document.getElementById("sliderProgress");
+          if (progress) {
+            const percentage = ((value - 30) / (99 - 30)) * 100;
+            progress.style.width = percentage + "%";
+          }
+
+          // Update active preset button
+          updateActivePreset(parseInt(value));
+
+          // Auto-apply filter if enabled
+          const autoFilter = document.getElementById("autoFilter");
+          if (autoFilter && autoFilter.checked) {
+            applyProbabilityFilter();
+          }
+        };
+
+        // Set Preset Value
+        window.setPresetValue = function (value) {
+          const slider = document.getElementById("probabilityThreshold");
+          slider.value = value;
+          updateProbabilityDisplay(value);
+
+          // Apply filter immediately for presets
+          applyProbabilityFilter();
+        };
+
+        // Update Active Preset Button
+        function updateActivePreset(value) {
+          const presetButtons = document.querySelectorAll(".preset-btn");
+          presetButtons.forEach((btn) => {
+            btn.classList.remove("active");
+          });
+
+          // Mark corresponding preset as active
+          const presetValues = [50, 65, 75, 85];
+          const index = presetValues.indexOf(value);
+          if (index !== -1) {
+            presetButtons[index].classList.add("active");
+          }
+        }
+
+        // Enhanced Apply Probability Filter
+        window.applyProbabilityFilter = function () {
+          const threshold = parseInt(
+            document.getElementById("probabilityThreshold").value
+          );
+          const container = document.getElementById("highProbGames");
+          const list = document.getElementById("highProbList");
+          const count = document.getElementById("highProbCount");
+          const sortByProb = document.getElementById("sortByProb").checked;
+
+          if (!currentSport) {
+            alert("Please fetch odds for a sport first");
+            return;
+          }
+
+          // Get all current games
+          const gameCards = document.querySelectorAll(".game-card");
+          let highProbGames = [];
+
+          gameCards.forEach((card) => {
+            const probabilityElements =
+              card.querySelectorAll(".odds-probability");
+            probabilityElements.forEach((probElement) => {
+              const probability = parseFloat(
+                probElement.textContent.replace("%", "")
+              );
+              if (probability >= threshold) {
+                const teamName = probElement
+                  .closest(".team-odds")
+                  .querySelector(".team-name").textContent;
+                const price = probElement
+                  .closest(".team-odds")
+                  .querySelector(".odds-price").textContent;
+                const gameTitle = card.querySelector(".game-title").textContent;
+
+                highProbGames.push({
+                  game: gameTitle,
+                  team: teamName,
+                  probability: probability,
+                  odds: price,
+                });
+              }
+            });
+          });
+
+          // Sort by probability if enabled
+          if (sortByProb) {
+            highProbGames.sort((a, b) => b.probability - a.probability);
+          }
+
+          // Update the display
+          if (highProbGames.length > 0) {
+            list.innerHTML = highProbGames
+              .map(
+                (game) => `
+              <div class="high-prob-item">
+                <div class="game-info">
+                  <div class="team-name">${game.team}</div>
+                  <div class="game-title">${game.game}</div>
+                </div>
+                <div class="prob-odds">
+                  <span class="probability">${game.probability}%</span>
+                  <span class="odds">${game.odds}</span>
+                </div>
+              </div>
+            `
+              )
+              .join("");
+
+            count.textContent = highProbGames.length;
+            count.style.background =
+              highProbGames.length > 5
+                ? "var(--success-color)"
+                : "var(--warning-color)";
+            container.style.display = "block";
+            // Update sticky Top Picks chips
+            const topBar = document.getElementById("topPicksBar");
+            const topCount = document.getElementById("topPicksCount");
+            const topChips = document.getElementById("topPicksChips");
+            topCount.textContent = highProbGames.length;
+            topChips.innerHTML = highProbGames
+              .slice(0, 20)
+              .map(
+                (g) => `
+                <span class="pick-chip">
+                  <span>${g.team}</span>
+                  <span class="prob">${g.probability}%</span>
+                  <span class="odds">${g.odds}</span>
+                </span>
+              `
+              )
+              .join("");
+            topBar.style.display = "block";
+          } else {
+            list.innerHTML = `
+              <div class="text-center py-4 text-muted-foreground">
+                <i class="fas fa-search text-2xl mb-2 opacity-50"></i>
+                <p>No games meet the ${threshold}% probability threshold.</p>
+                <p class="text-sm mt-1">Try lowering the threshold or check back later.</p>
+              </div>
+            `;
+            count.textContent = "0";
+            count.style.background = "var(--text-muted)";
+            container.style.display = "block";
+            const topBar = document.getElementById("topPicksBar");
+            if (topBar) topBar.style.display = "none";
+          }
+        };
+
+        // Clear Probability Filter
+        window.clearProbabilityFilter = function () {
+          const container = document.getElementById("highProbGames");
+          const slider = document.getElementById("probabilityThreshold");
+
+          // Reset slider to default
+          slider.value = 65;
+          updateProbabilityDisplay(65);
+
+          // Hide results
+          container.style.display = "none";
+
+          // Clear active preset
+          const presetButtons = document.querySelectorAll(".preset-btn");
+          presetButtons.forEach((btn) => btn.classList.remove("active"));
+
+          // Mark default preset as active
+          updateActivePreset(65);
+        };
+
+        // Initialize slider progress on page load
+        document.addEventListener("DOMContentLoaded", function () {
+          // Set initial progress bar
+          updateProbabilityDisplay(65);
+
+          // Initialize auto-filter checkbox listener
+          const autoFilter = document.getElementById("autoFilter");
+          if (autoFilter) {
+            autoFilter.addEventListener("change", function () {
+              if (this.checked && currentSport) {
+                applyProbabilityFilter();
+              }
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
