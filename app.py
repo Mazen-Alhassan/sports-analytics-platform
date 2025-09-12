@@ -13,10 +13,10 @@ from twilio.rest import Client
 app = Flask(__name__)
 
 # API Configuration
-ODDS_API_KEY = 'ba807efa3b017ed4cb064a59bdde4fe6'  # Replace with your Odds API key
+ODDS_API_KEY = os.getenv('ODDS_API_KEY', 'your-odds-api-key-here')  # Get your free key from: https://the-odds-api.com/
 ODDS_BASE_URL = 'https://api.the-odds-api.com/v4/sports'
 NBA_STATS_BASE_URL = 'https://api-nba-v1.p.rapidapi.com'
-NBA_API_KEY = 'a92520124bmsh1d35026bb6db4c9p16ca55jsn2ef321a19a33'  # Replace with your NBA API key
+NBA_API_KEY = os.getenv('NBA_API_KEY', 'your-rapidapi-key-here')  # Get your free key from: https://rapidapi.com/
 HEADERS = {
     'X-RapidAPI-Key': NBA_API_KEY,
     'X-RapidAPI-Host': 'api-nba-v1.p.rapidapi.com'
