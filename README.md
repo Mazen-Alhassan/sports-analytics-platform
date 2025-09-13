@@ -1,5 +1,7 @@
 # Sports Analytics Platform
 
+![Sports Analytics Platform](sports-analyzer.png)
+
 Advanced real-time sports analytics platform with multi-API integration, statistical modeling, automated notifications, and comprehensive data visualization capabilities.
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
